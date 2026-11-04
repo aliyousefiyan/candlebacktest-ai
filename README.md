@@ -1,12 +1,14 @@
 # CandleBacktest AI
 
+[![Unit tests and smoke](https://github.com/aliyousefiyan/candlebacktest-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/aliyousefiyan/candlebacktest-ai/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 **An early local-first, auditable strategy builder and historical-bar backtester.**
 
 CandleBacktest AI brings strategy description, a constrained AI interpreter, a manual no-code strategy builder, and a deterministic replay engine into **one browser interface**. Users can describe an idea in Persian or English, **review** the proposed JSON rules, then run an illustrative backtest on their own OHLCV CSV. The AI is optional; manual strategy creation and deterministic replay work without AI or internet.
 
 > **Status: experimental MVP v0.1.1.** This is NOT a generalized TradingView/Pine Script execution engine, NOT a trustworthy replacement for all TradingView strategies, NOT a validated real-money performance engine, and NOT a packaged/hosted AI model. There is no proof of live performance or independent trading-strategy profitability.
 
-[راهنمای فارسی](README.fa.md) · [Indicator support](docs/INDICATORS_AND_TRADINGVIEW.md) · [Execution assumptions](docs/EXECUTION_AND_SCHEMA.md) · [AI evaluation plan](docs/AI_EVALUATION.md) · [CandleAudit integration](docs/CANDLEAUDIT.md)
+[راهنمای فارسی](README.fa.md) · [Indicator support](docs/INDICATORS_AND_TRADINGVIEW.md) · [Execution assumptions](docs/EXECUTION_AND_SCHEMA.md) · [Verification](docs/VERIFICATION.md) · [AI evaluation plan](docs/AI_EVALUATION.md) · [CandleAudit integration](docs/CANDLEAUDIT.md)
 
 ## Fastest local demo (no API key)
 
