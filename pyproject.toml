@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "candlebacktest-ai"
+version = "0.1.1"
+description = "Auditable, local-first AI strategy builder and deterministic OHLCV backtesting engine"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "CandleBacktest contributors"}]
+keywords = ["backtesting", "technical-analysis", "ai", "ohlcv", "trading"]
+classifiers = ["Programming Language :: Python :: 3", "License :: OSI Approved :: MIT License"]
+
+[project.scripts]
+candlebacktest = "candlebacktest_ai.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+candlebacktest_ai = ["static/*.html"]

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CandleBacktest AI — بک‌تست با قوانین قابل بررسی</title>
+<style>
+:root{--bg:#0c1424;--panel:#152238;--ink:#f3f7ff;--muted:#adbed7;--line:#334665;--accent:#58c8bd;--error:#ff9e9e}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--ink);font-family:Tahoma,system-ui,sans-serif;margin:0;line-height:1.75}
+header,main,footer{max-width:1100px;margin:auto;padding:16px 22px}header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+header h1{font-size:1.5rem;margin:0}h2{font-size:1.1rem;margin-top:0}p,.muted{color:var(--muted)}
+small{color:var(--muted)}.badge{font-size:.85rem;padding:3px 9px;border:1px solid var(--line);border-radius:30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(315px,1fr));gap:16px}.card{background:var(--panel);border:1px solid var(--line);padding:20px;border-radius:15px;margin-bottom:16px}
+label{font-weight:bold;display:block;margin:8px 0}input,textarea,select{display:block;width:100%;background:#0b1628;border:1px solid #55647c;color:var(--ink);border-radius:8px;padding:12px;font-size:1rem;font-family:ui-monospace,Consolas,monospace;direction:ltr;text-align:left}
+textarea{min-height:185px;resize:vertical}.ai-text{font-family:Tahoma,system-ui,sans-serif;direction:rtl;text-align:right;min-height:150px}
+button{border:0;background:var(--accent);color:#08201f;font-weight:bold;padding:11px 18px;border-radius:9px;cursor:pointer;margin:8px 0}button.secondary{color:var(--ink);background:#30425f}button:disabled{opacity:.6;cursor:wait}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0d192b;padding:12px;border-radius:9px;color:#e0edff;max-height:270px;overflow:auto;direction:ltr;text-align:left}
+.alert{border:1px solid var(--line);padding:12px;border-radius:9px;white-space:pre-wrap}.bad{color:var(--error)}.good{color:var(--accent)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}.metric{background:#0c192b;border-radius:9px;padding:12px}.metric b{font-size:1.2rem;display:block;font-variant-numeric:tabular-nums}
+.table-scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.9rem}td,th{border-bottom:1px solid var(--line);padding:8px;text-align:right;white-space:nowrap}
+svg{width:100%;height:auto;background:#0b1628;border-radius:12px;display:block;direction:ltr}.links a{color:#82ddd4}
+</style>
+</head>
+<body>
+<header><h1>🕯️ CandleBacktest AI</h1><span class="badge">MVP 0.1.1 · Local only · Long-only</span></header>
+<main>
+<div class="card"><h2>استراتژی خود را در همین برنامه تعریف و آزمایش کن</h2>
+<p>می‌توانی استراتژی را به هوش مصنوعی محلی بدهی تا قوانین استاندارد پیشنهاد کند، یا مستقیم JSON را ویرایش کنی. مدل فقط پیشنهاد می‌دهد؛ اجرای بک‌تست با موتور قطعی انجام می‌شود. هیچ نتیجه‌ای قبل از محاسبه واقعی نمایش داده نمی‌شود.</p>
+</div>
+<section class="card"><h2>روش رایگان پیشنهادی: استفاده از هوش مصنوعی خودت، بدون نصب Ollama</h2>
+<p>پرامپت استاندارد را کپی کن، همراه با توضیح استراتژی در ChatGPT یا هوش مصنوعی دلخواهت بفرست و به سؤال‌هایش پاسخ بده. فقط پس از تکمیل سؤال‌ها JSON نهایی را اینجا وارد کن.</p>
+<div><button id="copyExternalPrompt" type="button">کپی پرامپت رسمی</button><span id="copyPromptStatus" role="status" aria-live="polite"></span></div>
+<details><summary>مشاهده متن پرامپت</summary><textarea id="externalPrompt" spellcheck="false" readonly style="min-height:210px"># پرامپت رسمی CandleBacktest AI — قرارداد نسخه 0.1
+
+این متن را همراه با توضیح استراتژی خود در ChatGPT، Gemini یا هر مدل دیگر وارد کن.
+
+## نقش تو
+تو «مترجم استراتژی به قرارداد CandleBacktest AI v0.1» هستی؛ نه معامله‌گر، نه مشاور سرمایه‌گذاری و نه موتور محاسبه بک‌تست. نباید کد Python/Pine، خروجی جعلی، توصیه معامله یا قابلیت پشتیبانی‌نشده بسازی. هدف، گرفتن شرح دقیق استراتژی با سؤال‌های روشن و تبدیل آن به JSON امن قابل واردکردن در برنامه است.
+
+## گام اول: روشن‌کردن ابهام‌ها
+پیش از ساخت JSON، از من درباره هر مورد تعیین‌نشده سؤال بپرس: نماد و تایم‌فریم، دقیقاً شروط ورود و خروج، اندیکاتور و پارامترهایش، TP و SL درصدی، درصد سرمایه مصرف‌شده در هر خرید (نه درصد ریسک)، سرمایه اولیه، کارمزد و لغزش قیمت. اگر شرط مبهم، متناقض یا خارج از قابلیت برنامه است، آن را توضیح بده و **فقط** جایگزین‌های مجاز و متفاوت از نظر عملکرد را پیشنهاد کن. تا تأیید من پیش‌فرض یا تقریب دلخواه اتخاذ نکن. سؤال‌ها را گروه‌بندی کن تا پاسخ‌دادن آسان باشد.
+
+## قابلیت‌های دقیق و غیرقابل گسترش v0.1
+- تنها خرید Long در بازار Spot؛ یک نماد، یک تایم‌فریم و حداکثر یک موقعیت باز؛ بدون Short، اهرم، پوزیشن چندگانه، شبکه سفارش، DCA، سفارش Limit، سشن‌های بازار و چندتایم‌فریم.
+- تنها تایم‌فریم‌های `5m`، `15m`، `1h`، `4h`، `1d`. داده OHLCV دارای فاصله منظم UTC باید توسط کاربر وارد شود.
+- فیلدهای آماده `open`, `high`, `low`, `close`, `volume`.
+- اندیکاتورها فقط `sma`، `ema`، `rsi`، `atr` با پارامتر صحیح `length` بین 1 تا 1000؛ `macd` با `fast`، `slow`، `signal` اعداد صحیح 1..1000 و `fast &lt; slow`؛ `bbands` با `length` صحیح 1..1000 و `deviations` اختیاری، عدد مثبت تا 20.
+- برای SMA/EMA/RSI/ATR به نام مستعار اندیکاتور رجوع کن؛ برای MACD فقط `alias.line`، `alias.signal`، `alias.histogram`؛ برای Bollinger فقط `alias.upper`، `alias.middle`، `alias.lower`.
+- مقایسه‌ها فقط `crosses_above`، `crosses_below`، `gt`، `gte`، `lt`، `lte` هستند. هر شرط شکل `{&quot;left&quot;:&quot;fast&quot;,&quot;op&quot;:&quot;crosses_above&quot;,&quot;right&quot;:&quot;slow&quot;}` دارد. هر سمت می‌تواند نام فیلد/اندیکاتور معتبر یا عدد باشد.
+- ترکیب شروط فقط AND در قالب `{&quot;all&quot;:[...]}`؛ بدون OR، NOT، مراحل شرطی و تأخیر دلخواه. `entry.all` حداقل یک شرط لازم دارد. `exit.all` می‌تواند خالی باشد.
+- `initial_cash`: عدد مثبت تا 1e12؛ `allocation_pct`: بزرگ‌تر از صفر تا 100 (سهم از وجه نقد قابل استفاده، نه ریسک تا استاپ)؛ `fee_bps` و `slippage_bps`: هر یک 0..1000؛ `tp_pct`: مثبت تا 1000؛ `sl_pct`: مثبت و کمتر از 99.9؛ همه درصدها بر حسب درصد، نه اعشار 0..1 هستند.
+- **منطق ثابت موتور:** شروط روی بسته‌شدن کندل بررسی می‌شوند، ورود/خروج مبتنی بر سیگنال در Open کندل بعد انجام می‌شود؛ TP/SL با OHLC بررسی می‌شود و اگر هر دو در یک کندل لمس شوند، SL مقدم است. نمی‌توان این سیاست را با JSON تغییر داد.
+- ICT/SMC، Order Block، FVG، BOS، CHoCH، سشن‌های بازار، Pine Script و اندیکاتور سفارشی در این نسخه قابل اجرا نیستند. چنین قوانینی را بی‌سروصدا به EMA یا اندیکاتور دیگری تبدیل نکن.
+
+## گام دوم: خروجی فقط پس از پاسخ به همه پرسش‌های ضروری
+هنگامی که من تمام انتخاب‌ها را تأیید کردم و استراتژی کاملاً قابل نمایش بود، **فقط** یک آبجکت JSON معتبر و بدون Markdown/کدبلاک/توضیح اضافه تحویل بده، با دقیقاً سه کلید `strategy`، `questions` و `assumptions`.
+- `questions` باید آرایه خالی `[]` باشد؛ اگر سؤال حل‌نشده وجود دارد، به مرحله سؤال‌و‌جواب برگرد و JSON نهایی نده.
+- `assumptions` باید فهرست فرض‌هایی باشد که صریحاً با من مطرح و تأیید شده‌اند؛ اگر فرضی نمانده، `[]` باشد.
+- `strategy` **تمام** کلیدهای زیر را داشته باشد؛ چیزی اضافه نکن: `name`, `symbol`, `timeframe`, `initial_cash`, `allocation_pct`, `fee_bps`, `slippage_bps`, `tp_pct`, `sl_pct`, `indicators`, `entry`, `exit`.
+- `indicators` آبجکت از نام‌مستعار به مشخصات همان اندیکاتور است؛ نام مستعار باید نام شناسه ساده و یکتا باشد؛ از `open/high/low/close/volume` به‌عنوان نام مستعار استفاده نکن.
+- هر شرط فقط کلیدهای `left`, `op`, `right` را داشته باشد. مقدار عددی را بدون کوتیشن و نام اندیکاتور را با کوتیشن بنویس. مقدارهای عددی باید متناهی باشند.
+- هر دو `entry` و `exit` دقیقاً آبجکت `{&quot;all&quot;:[...]}` باشند.
+
+## نمونه صرفاً برای ساختار (به‌جای قوانین من استفاده نکن)
+{&quot;strategy&quot;:{&quot;name&quot;:&quot;EMA 20/50 training example&quot;,&quot;symbol&quot;:&quot;DEMOUSDT&quot;,&quot;timeframe&quot;:&quot;4h&quot;,&quot;initial_cash&quot;:10000,&quot;allocation_pct&quot;:20,&quot;fee_bps&quot;:5,&quot;slippage_bps&quot;:0,&quot;tp_pct&quot;:10,&quot;sl_pct&quot;:5,&quot;indicators&quot;:{&quot;fast&quot;:{&quot;type&quot;:&quot;ema&quot;,&quot;length&quot;:20},&quot;slow&quot;:{&quot;type&quot;:&quot;ema&quot;,&quot;length&quot;:50}},&quot;entry&quot;:{&quot;all&quot;:[{&quot;left&quot;:&quot;fast&quot;,&quot;op&quot;:&quot;crosses_above&quot;,&quot;right&quot;:&quot;slow&quot;}]},&quot;exit&quot;:{&quot;all&quot;:[{&quot;left&quot;:&quot;fast&quot;,&quot;op&quot;:&quot;crosses_below&quot;,&quot;right&quot;:&quot;slow&quot;}]}},&quot;questions&quot;:[],&quot;assumptions&quot;:[]}
+
+## هشدار نهایی
+قالب درست به معنی درک درست استراتژی نیست. از کاربر بخواه JSON را در برنامه وارد کند، گزارش اعتبارسنجی را بررسی کند و قواعد را قبل از بک‌تست تأیید کند. سود یا موفقیت بک‌تست را پیش‌بینی نکن. هیچ کد اجرایی یا کلید API درخواست نکن.
+
+## توضیح استراتژی من
+[در اینجا کاربر استراتژی خود را می‌نویسد]
+</textarea></details>
+<label for="externalOutput">خروجی نهایی JSON از هوش مصنوعی شخصی</label>
+<textarea id="externalOutput" spellcheck="false" placeholder='{"strategy":{...},"questions":[],"assumptions":[]}'></textarea>
+<input type="file" id="externalJsonFile" accept=".json,application/json" aria-label="بارگذاری فایل خروجی JSON"/>
+<button id="loadExternal" class="secondary" type="button">بررسی و انتقال به قوانین</button>
+<div id="externalStatus" role="status" aria-live="polite"></div>
+<small>اگر AI سؤال حل‌نشده دارد یا اندیکاتور پشتیبانی نمی‌شود، به جای اجرای بک‌تست باید قوانین را اصلاح کنی. ورود کد Python یا Pine Script مجاز نیست.</small>
+</section>
+<div class="grid">
+<section class="card"><h2>۱. توضیح استراتژی به AI محلی (اختیاری)</h2>
+<label for="description">متن استراتژی (فارسی یا انگلیسی)</label>
+<textarea id="description" class="ai-text" placeholder="مثلاً وقتی EMA20 از EMA50 به بالا عبور کرد بخر؛ در کندل بعدی وارد شو؛ حد سود ۱۰٪، حد ضرر ۵٪...">وقتی EMA20 از EMA50 به بالا عبور کرد خرید کن؛ در باز شدن کندل بعد وارد شو. حد سود ۱۰ درصد، حد ضرر ۵ درصد و خروج در تقاطع نزولی باشد. فقط Long.</textarea>
+<button id="interpret">تبدیل به قوانین با Ollama</button>
+<div class="muted">نیازمند نصب و اجرای Ollama در همین کامپیوتر است. اتصال AI اختیاری است.</div>
+<div id="aiStatus" role="status" aria-live="polite"></div>
+</section>
+<section class="card"><h2>۲. بررسی قوانین قبل از اجرا</h2>
+<label for="strategy">قوانین استاندارد و قابل ویرایش (JSON)</label>
+<textarea id="strategy" spellcheck="false"></textarea>
+<button class="secondary" id="sample">بارگذاری استراتژی نمونه</button>
+<p class="muted">اگر AI سؤال یا فرض اضافی پیشنهاد کرد، قبل از اجرا مشخصات را خودت اصلاح و تأیید کن. هیچ Python یا Pine از این قسمت اجرا نمی‌شود.</p>
+</section>
+</div>
+<section class="card"><h2>راه ساده بدون کدنویسی: استراتژی تقاطع میانگین متحرک</h2>
+<p>اگر هوش مصنوعی محلی نداری، همین چند گزینه را انتخاب کن؛ برنامه قوانین JSON را به‌طور خودکار ایجاد می‌کند. این فرم فعلاً فقط استراتژی تقاطع SMA/EMA را می‌سازد.</p>
+<div class="grid">
+<div><label>نوع میانگین</label><select id="maType"><option value="ema">EMA</option><option value="sma">SMA</option></select></div>
+<div><label>نماد موجود در CSV</label><input id="symbol" value="DEMOUSDT"/></div>
+<div><label>دوره میانگین سریع</label><input id="fastLength" type="number" min="1" max="1000" value="20"/></div>
+<div><label>دوره میانگین کند</label><input id="slowLength" type="number" min="1" max="1000" value="50"/></div>
+<div><label>تایم‌فریم</label><select id="timeframe"><option value="4h">4h</option><option value="15m">15m</option><option value="1h">1h</option><option value="1d">1d</option><option value="5m">5m</option></select></div>
+<div><label>درصد سرمایه هر ورود</label><input id="allocation" type="number" min="1" max="100" value="20"/></div>
+<div><label>حد سود (%)</label><input id="takeProfit" type="number" min="0.1" max="1000" value="10"/></div>
+<div><label>حد ضرر (%)</label><input id="stopLoss" type="number" min="0.1" max="99.9" value="5"/></div>
+</div>
+<button id="buildSimple" class="secondary">ساخت قوانین از این تنظیمات</button><div id="builderStatus" role="status" aria-live="polite"></div>
+</section>
+<section class="card"><h2>۳. دریافت داده و اجرای بک‌تست</h2>
+<label for="csvfile">فایل CSV کندل‌ها (OHLCV با UTC)</label>
+<input type="file" id="csvfile" accept=".csv,text/csv"/>
+<small>ستون‌ها: timestamp,symbol,open,high,low,close,volume — تایم‌فریم و نماد باید با JSON یکسان باشند. برای شروع از فایل نمونه داخل پوشه examples استفاده کن.</small>
+<label style="display:flex;align-items:center;gap:9px;font-weight:normal"><input id="useAudit" type="checkbox" style="width:auto;accent-color:#58c8bd"> ممیزی مستقل کندل‌ها با CandleAudit نصب‌شده (اختیاری)</label>
+<label style="display:flex;align-items:center;gap:9px;font-weight:normal"><input id="confirmed" type="checkbox" style="width:auto;accent-color:#58c8bd"> تمام قوانین ورود، خروج، درصدها و فرض‌ها را خوانده و تأیید کرده‌ام.</label>
+<div><button id="run">▶ اجرای بک‌تست</button></div><div id="status" role="status" aria-live="polite"></div>
+</section>
+<section class="card" id="output" hidden><h2>۴. نتایج واقعی محاسبه‌شده</h2>
+<div id="metrics" class="metrics"></div>
+<h3>نمودار سرمایه (بر اساس قیمت بسته‌شدن کندل)</h3>
+<svg id="chart" viewBox="0 0 900 280" aria-label="Equity curve"></svg>
+<p class="muted">این نمودار افت شناور داخل کندل را محاسبه نمی‌کند. سوددهی قطعی یا اجرای واقعی معاملات را تضمین نمی‌کند.</p>
+<h3>معاملات بسته‌شده</h3><div class="table-scroll"><table><thead><tr><th>ورود</th><th>خروج</th><th>دلیل</th><th>سود خالص</th></tr></thead><tbody id="trades"></tbody></table></div>
+<button class="secondary" id="download">دانلود گزارش JSON</button>
+</section>
+<section class="card"><h2>محدودیت‌های نسخه آزمایشی</h2>
+<p>فقط Spot، خرید Long و یک نماد؛ بدون Short، اهرم، چندارز، سفارش محدود، ATR-based sizing یا تأمین مالی. در برخورد هم‌زمان TP و SL در یک کندل، SL اولویت دارد. اندیکاتورهای قابل اجرا: SMA، EMA، RSI، ATR، MACD و Bollinger Bands. «تمام اندیکاتورهای TradingView» هنوز پشتیبانی نمی‌شوند.</p>
+<div class="links"><a href="https://github.com/aliyousefiyan/candleaudit" target="_blank" rel="noopener">CandleAudit — ممیزی مستقل داده</a></div>
+</section>
+</main><footer><small>Educational software · No keys, no exchange orders, no guaranteed returns · Never paste private strategy code into a public issue.</small></footer>
+<script>
+const sample={name:'EMA20/50 example',symbol:'DEMOUSDT',timeframe:'4h',initial_cash:10000,allocation_pct:20,fee_bps:5,slippage_bps:0,tp_pct:10,sl_pct:5,indicators:{fast:{type:'ema',length:20},slow:{type:'ema',length:50}},entry:{all:[{left:'fast',op:'crosses_above',right:'slow'}]},exit:{all:[{left:'fast',op:'crosses_below',right:'slow'}]}};
+const $=s=>document.querySelector(s);
+const setMessage=(target,message,error=false)=>{const box=$(target);box.textContent=message;box.className=error?'alert bad':'alert good'};
+$('#copyExternalPrompt').onclick=async()=>{const t=$('#externalPrompt');try{await navigator.clipboard.writeText(t.value);setMessage('#copyPromptStatus','پرامپت کپی شد. آن را همراه با توضیح استراتژی به مدل خود بده.')}catch(e){t.focus();t.select();setMessage('#copyPromptStatus','کپی خودکار ممکن نشد؛ متن انتخاب شده را دستی کپی کن.',true)}};
+$('#externalJsonFile').onchange=async()=>{const f=$('#externalJsonFile').files[0];if(!f)return;if(f.size>1000000){setMessage('#externalStatus','حجم فایل JSON بیش از ۱ مگابایت است.',true);return}$('#externalOutput').value=await f.text();setMessage('#externalStatus','فایل بارگذاری شد؛ برای اعتبارسنجی دکمه بررسی را بزن.')};
+$('#loadExternal').onclick=async()=>{const button=$('#loadExternal');button.disabled=true;try{const obj=JSON.parse($('#externalOutput').value.trim());if(typeof obj!=='object'||obj===null||Array.isArray(obj))throw new Error('خروجی باید آبجکت JSON باشد.');if(Object.prototype.hasOwnProperty.call(obj,'strategy')){
+  if(Object.keys(obj).sort().join(',')!=='assumptions,questions,strategy')throw new Error('خروجی AI باید فقط شامل strategy، questions و assumptions باشد.');
+  if(!Array.isArray(obj.questions)||!Array.isArray(obj.assumptions))throw new Error('questions و assumptions باید آرایه باشند.');
+  if(obj.questions.length)throw new Error('AI سؤال حل‌نشده دارد: '+obj.questions.join(' | ')+'؛ ابتدا به AI پاسخ بده و JSON نهایی بگیر.');
+  if(obj.assumptions.some(x=>typeof x!=='string'))throw new Error('assumptions باید آرایه متن باشد.');
+  var assumptions=obj.assumptions;
+  var spec=obj.strategy;
+} else {var spec=obj;var assumptions=[];}
+const response=await fetch('/api/validate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({strategy:spec})});const result=await response.json();if(!response.ok)throw new Error(result.error||'قوانین نامعتبر است');
+$('#strategy').value=JSON.stringify(result.strategy,null,2);$('#confirmed').checked=false;
+setMessage('#externalStatus','قوانین از نظر ساختاری معتبرند؛ هنوز از نظر معنای استراتژی تأیید نشده‌اند. همه قوانین را با توضیحات خودت تطبیق بده. '+(assumptions.length?'فرض‌های AI: '+assumptions.join(' | '):'فرض اضافی اعلام نشده است.'));
+}catch(e){setMessage('#externalStatus',e.message,true)}finally{button.disabled=false}};
+$('#strategy').value=JSON.stringify(sample,null,2);
+$('#sample').onclick=()=>{$('#strategy').value=JSON.stringify(sample,null,2);$('#confirmed').checked=false;$('#aiStatus').textContent='قوانین نمونه بارگذاری شدند.'};
+$('#buildSimple').onclick=()=>{try{
+const kind=$('#maType').value,fast=Number($('#fastLength').value),slow=Number($('#slowLength').value),tp=Number($('#takeProfit').value),sl=Number($('#stopLoss').value),allocation=Number($('#allocation').value);
+if(!Number.isInteger(fast)||!Number.isInteger(slow)||fast<1||slow<=fast||slow>1000)throw new Error('طول میانگین کند باید از میانگین سریع بزرگ‌تر و هر دو صحیح باشند.');
+if(!(tp>0&&tp<=1000&&sl>0&&sl<100&&allocation>0&&allocation<=100))throw new Error('درصدها خارج از محدوده مجاز هستند.');
+const strategy=JSON.parse(JSON.stringify(sample));strategy.name=kind.toUpperCase()+' '+fast+'/'+slow+' simple crossover';strategy.symbol=$('#symbol').value.toUpperCase().trim();strategy.timeframe=$('#timeframe').value;strategy.tp_pct=tp;strategy.sl_pct=sl;strategy.allocation_pct=allocation;strategy.indicators={fast:{type:kind,length:fast},slow:{type:kind,length:slow}};
+$('#strategy').value=JSON.stringify(strategy,null,2);$('#confirmed').checked=false;setMessage('#builderStatus','قوانین ساخته شد؛ پیش از اجرا مرور کن. ورود در کندل بعد، خروج با تقاطع معکوس یا TP/SL و کارمزد ۵ واحد پایه است.');
+}catch(e){setMessage('#builderStatus',e.message,true)}};
+
+$('#interpret').onclick=async()=>{const button=$('#interpret');button.disabled=true;setMessage('#aiStatus','در حال خواندن توضیحات توسط مدل محلی...');try{const response=await fetch('/api/interpret',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({description:$('#description').value})});const value=await response.json();if(!response.ok)throw new Error(value.error);$('#strategy').value=JSON.stringify(value.strategy,null,2);$('#confirmed').checked=false;setMessage('#aiStatus','پیش‌نویس آماده شد. قبل از اجرا بررسی کن.\nسؤال‌ها: '+(value.questions.join(' | ')||'موردی ثبت نشده')+'\nفرض‌ها: '+(value.assumptions.join(' | ')||'موردی ثبت نشده'));}catch(e){setMessage('#aiStatus',e.message,true)}finally{button.disabled=false}};
+const safe=x=>Number.isFinite(x)?x.toLocaleString('en-US',{maximumFractionDigits:3}):'—';
+let lastReport=null;
+$('#run').onclick=async()=>{const button=$('#run');button.disabled=true;setMessage('#status','در حال اعتبارسنجی داده و اجرای بک‌تست...');try{if(!$('#confirmed').checked)throw new Error('ابتدا تأیید کن که قوانین و فرض‌های اجرا را بررسی کرده‌ای.');const f=$('#csvfile').files[0];if(!f)throw new Error('لطفاً ابتدا فایل CSV را انتخاب کن.');const strategy=JSON.parse($('#strategy').value);const csv=await f.text();const response=await fetch('/api/backtest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({strategy,csv,audit:$('#useAudit').checked})});const data=await response.json();if(!response.ok)throw new Error(data.error||'خطای اجرای بک‌تست');const r=data.report;lastReport={...r,independent_candleaudit_candles:data.candleaudit};const m=r.metrics;$('#metrics').replaceChildren();const items=[['سرمایه اولیه',safe(m.starting_cash)],['سرمایه پایانی',safe(m.final_equity)],['بازده',safe(m.return_pct)+'%'],['افت سرمایه در بسته‌شدن کندل‌ها',safe(m.max_closed_bar_drawdown_pct)+'%'],['معاملات بسته‌شده',safe(m.closed_trades)],['درصد برد',m.win_rate_pct===null?'—':safe(m.win_rate_pct)+'%'],['کارمزدهای ثبت‌شده',safe(m.fees_paid)]];for(const [key,val] of items){const el=document.createElement('div');el.className='metric';const label=document.createElement('span');label.textContent=key;const number=document.createElement('b');number.textContent=val;el.append(label,number);$('#metrics').append(el)}const tbody=$('#trades');tbody.replaceChildren();for(const t of r.trades){const tr=document.createElement('tr');for(const v of [t.entry_time,t.exit_time,t.exit_reason,safe(t.net_pnl)]){const td=document.createElement('td');td.textContent=v;tr.append(td)}tbody.append(tr)}if(!r.trades.length){const tr=document.createElement('tr');const td=document.createElement('td');td.colSpan=4;td.textContent='معامله بسته‌شده‌ای ثبت نشده است.';tr.append(td);tbody.append(tr)}draw(r.equity_curve.map(x=>x.equity));$('#output').hidden=false;setMessage('#status','بک‌تست کامل شد. '+(data.candleaudit?'ممیزی CandleAudit کندل‌ها نیز PASS شد.':'ممیزی مستقل CandleAudit اجرا نشد.')+' تنظیمات و محدودیت‌ها را در گزارش JSON بررسی کن.');}catch(e){$('#output').hidden=true;setMessage('#status',e.message,true)}finally{button.disabled=false}};
+function draw(numbers){const svg=$('#chart');svg.replaceChildren();if(!numbers.length)return;const lo=Math.min(...numbers),hi=Math.max(...numbers);const span=(hi-lo)||1;const points=numbers.map((v,i)=>`${20+(860*i/Math.max(1,numbers.length-1))},${250-(225*(v-lo)/span)}`).join(' ');const line=document.createElementNS('http://www.w3.org/2000/svg','polyline');line.setAttribute('points',points);line.setAttribute('fill','none');line.setAttribute('stroke','#58c8bd');line.setAttribute('stroke-width','2.4');svg.append(line)}
+$('#download').onclick=()=>{if(!lastReport)return;const blob=new Blob([JSON.stringify(lastReport,null,2)],{type:'application/json'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download='candlebacktest-report.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)};
+</script></body></html>

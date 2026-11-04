@@ -1,0 +1,17 @@
+{
+  "name": "Educational EMA20/50 crossover",
+  "symbol": "DEMOUSDT",
+  "timeframe": "4h",
+  "initial_cash": 10000,
+  "allocation_pct": 20,
+  "fee_bps": 5,
+  "slippage_bps": 0,
+  "tp_pct": 10,
+  "sl_pct": 5,
+  "indicators": {
+    "fast": {"type": "ema", "length": 20},
+    "slow": {"type": "ema", "length": 50}
+  },
+  "entry": {"all": [{"left": "fast", "op": "crosses_above", "right": "slow"}]},
+  "exit": {"all": [{"left": "fast", "op": "crosses_below", "right": "slow"}]}
+}
