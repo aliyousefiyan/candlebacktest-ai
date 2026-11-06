@@ -1,0 +1,38 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "candlebacktest-ai",
+  "version": "0.1.1",
+  "description": "Specify auditable beginner trading rules and simulate a long-only educational strategy on user-supplied OHLCV candles.",
+  "author": {
+    "name": "Community maintainer",
+    "url": "https://github.com/aliyousefiyan/candlebacktest-ai"
+  },
+  "homepage": "https://github.com/aliyousefiyan/candlebacktest-ai",
+  "repository": "https://github.com/aliyousefiyan/candlebacktest-ai",
+  "license": "MIT",
+  "keywords": [
+    "backtest",
+    "education",
+    "ohlcv",
+    "data quality"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "CandleBacktest AI",
+        "shortDescription": "Specify auditable beginner trading rules and simulate a long-only educational strategy on user-supplied OHLCV candles.",
+        "longDescription": "Specify auditable beginner trading rules and simulate a long-only educational strategy on user-supplied OHLCV candles. No live trading, investing recommendations or exchange access.",
+        "developerName": "Community maintainer",
+        "websiteURL": "https://github.com/aliyousefiyan/candlebacktest-ai",
+        "supportURL": "https://github.com/aliyousefiyan/candlebacktest-ai/issues",
+        "privacyPolicyURL": "https://github.com/aliyousefiyan/candlebacktest-ai/blob/main/PRIVACY.md",
+        "termsOfServiceURL": "https://github.com/aliyousefiyan/candlebacktest-ai/blob/main/TERMS.md",
+        "logo": "./assets/logo.png",
+        "defaultPrompt": [
+          "Help me define an EMA20/50 strategy and clarify its missing rules.",
+          "Run an educational backtest on my CSV and strategy JSON."
+        ]
+      }
+    }
+  }
+}
