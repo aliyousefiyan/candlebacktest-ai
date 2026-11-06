@@ -88,3 +88,7 @@ Fixture and tests are local. All market data in this repository is **invented sy
 ## License, privacy and support
 
 MIT, see [LICENSE](LICENSE). No TradingView affiliation. Open-source repos/code must be used according to their original licenses; do not upload protected/invite-only scripts or private strategy rules. Not financial advice. [Security](SECURITY.md) · [Contributing](CONTRIBUTING.md).
+
+## ChatGPT skill-plugin candidate
+
+A **skills-only** plugin package can be built from this public repository with `python scripts/build_chatgpt_plugin.py --smoke`. The ZIP includes the project's Python CLI, synthetic examples and constrained workflow instructions. See [ChatGPT plugin readiness and limitations](docs/CHATGPT_PLUGIN_REVIEW.md), [privacy policy](PRIVACY.md) and [terms](TERMS.md). **No OpenAI approval or public plugin-directory listing is claimed.** A Python-enabled host is required to execute packaged checks; this is not a hosted MCP app.
